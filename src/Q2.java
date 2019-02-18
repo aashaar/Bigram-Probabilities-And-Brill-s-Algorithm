@@ -28,7 +28,7 @@ public class Q2
             File file = new File(args[0]);
             //user delimitter (space-.-space-space 0r .-space-'') :
             Scanner s = new Scanner(file).useDelimiter(" .  |. ''");
-            int n =1;
+            int n =2;
             while(n!=0)
             //while(s.hasNext())
             {
@@ -83,7 +83,7 @@ public class Q2
             bigramMarginalProbabilitiesMap = calculateMarginalProbabilities(bigramsMap,bigramsTotalCount);
 
             //calculating probabilties for No Smoothing:
-            calculateNoSmoothingProbabilities(bigramsMap,unigramsMap);
+            noSmoothingProbabilitiesMap=calculateNoSmoothingProbabilities(bigramsMap,unigramsMap);
 
             s.close();
             //System.out.println(unigramsTotalCount);
@@ -94,6 +94,8 @@ public class Q2
             printHashMap1(unigramMarginalProbabilitiesMap);
             System.out.println("===========================================================================");
             printHashMap1(bigramMarginalProbabilitiesMap);
+            System.out.println("===========================================================================");
+            printHashMap1(noSmoothingProbabilitiesMap);
         }
         catch (IOException e)
         {
