@@ -1,5 +1,6 @@
 import java.io.*;
 import java.util.*;
+import java.util.function.DoubleUnaryOperator;
 
 public class Q2
 {
@@ -19,6 +20,8 @@ public class Q2
         HashMap<String,Double> unigramMarginalProbabilitiesMap = new HashMap<String, Double>();
         HashMap<String,Double> bigramMarginalProbabilitiesMap = new HashMap<String, Double>();
         HashMap<String,Double> noSmoothingProbabilitiesMap = new HashMap<String, Double>();
+        HashMap<String,Double> addOneSmoothingCountsMap = new HashMap<String, Double>();
+        HashMap<String,Double> addOneSmoothingProbabilitiesMap = new HashMap<String, Double>();
         // create an output file
         try
         {
@@ -77,14 +80,25 @@ public class Q2
             }
 
             //calculate marginal probabilities:
+
             //for unigrams:
             unigramMarginalProbabilitiesMap = calculateMarginalProbabilities(unigramsMap,unigramsTotalCount);
+
             //for bigrams:
             bigramMarginalProbabilitiesMap = calculateMarginalProbabilities(bigramsMap,bigramsTotalCount);
 
             //calculating probabilties for No Smoothing:
             noSmoothingProbabilitiesMap=calculateNoSmoothingProbabilities(bigramsMap,unigramsMap);
 
+            //calculate Add-One Smoothing count:
+            addOneSmoothingCountsMap = calculateAddOneSmoothingReconstitutedCounts(bigramsMap,unigramsMap,distinctUnigramTotalCount);
+
+            //calculate Add-one Smoothing Probabilities
+            addOneSmoothingProbabilitiesMap = calculateAddOneSmoothingProbabilities(bigramsMap,unigramsMap,distinctUnigramTotalCount);
+
+
+
+            //close the scanner object:
             s.close();
             //System.out.println(unigramsTotalCount);
             //System.out.println(distinctUnigramTotalCount);
@@ -96,12 +110,95 @@ public class Q2
             printHashMap1(bigramMarginalProbabilitiesMap);
             System.out.println("===========================================================================");
             printHashMap1(noSmoothingProbabilitiesMap);
+            System.out.println("===========================================================================");
+            printHashMap1(addOneSmoothingCountsMap);
+            System.out.println("===========================================================================");
+            printHashMap1(addOneSmoothingProbabilitiesMap);
+            System.out.println("===========================================================================");
         }
         catch (IOException e)
         {
             e.printStackTrace();
         }
     }
+
+    /*
+     * function to calculate counts for Add one Smoothing .
+     * @param bigramsMap : hashmap of bigrams count
+     * @param unigram : hashmap of bigrams count
+     * @param distinctUnigramTotalCount
+     * */
+    private static HashMap<String, Double> calculateAddOneSmoothingReconstitutedCounts(HashMap<String,Integer>bigramsMap , HashMap<String,Integer>unigramsMap, int distinctUnigramTotalCount)
+    {
+        HashMap<String, Double> result = new HashMap<String, Double>();
+        for(Map.Entry<String,Integer> entry : bigramsMap.entrySet())
+        {
+            String[] tokens = entry.getKey().split("~~~");
+            //note the order - the first word will be "given" or "previous" & the 2nd word will be "current"
+            String givenWord = tokens[0];
+            String currentWord = tokens[1];
+            int denominator = (unigramsMap.get(givenWord))+distinctUnigramTotalCount;
+            double reconstitutedCount = ((double) entry.getValue() +1) * unigramsMap.get(givenWord)/denominator;
+            result.put((givenWord +"~~~" + currentWord),reconstitutedCount);
+        }
+        return result;
+    }
+
+    /*
+     * function to calculate counts for Add one Smoothing .
+     * @param bigramsMap : hashmap of bigrams count
+     * @param unigram : hashmap of bigrams count
+     * @param distinctUnigramTotalCount
+     * */
+    private static HashMap<String, Double> calculateAddOneSmoothingProbabilities(HashMap<String,Integer>bigramsMap , HashMap<String,Integer>unigramsMap, int distinctUnigramTotalCount)
+    {
+        HashMap<String, Double> result = new HashMap<String, Double>();
+        for(Map.Entry<String,Integer> entry : bigramsMap.entrySet())
+        {
+            String[] tokens = entry.getKey().split("~~~");
+            //note the order - the first word will be "given" or "previous" & the 2nd word will be "current"
+            String givenWord = tokens[0];
+            String currentWord = tokens[1];
+            int denominator = (unigramsMap.get(givenWord))+distinctUnigramTotalCount;
+            double probability = ((double) entry.getValue() +1) /denominator;
+            result.put((currentWord +" | " + givenWord),probability);
+        }
+        return result;
+    }
+
+
+    /*
+    * function to calculate Normal conditional probabilities or No Smoothing probabilities.
+    * @param bigramsMap : hashmap of bigrams count
+    * @param unigram : hashmap of bigrams count
+    * calculates probability by dividing the bigram count with the count of the given word.
+    * */
+    private static HashMap<String, Double> calculateNoSmoothingProbabilities(HashMap<String,Integer>bigramsMap , HashMap<String,Integer>unigramsMap)
+    {
+        HashMap<String, Double> result = new HashMap<String, Double>();
+        for(Map.Entry<String,Integer> entry : bigramsMap.entrySet())
+        {
+            String[] tokens = entry.getKey().split("~~~");
+            //note the order - the first word will be "given" or "previous" & the 2nd word will be "current"
+            String givenWord = tokens[0];
+            String currentWord = tokens[1];
+            double probability = (double) entry.getValue()/unigramsMap.get(givenWord);
+            result.put((currentWord+ " | "+ givenWord),probability);
+        }
+        return result;
+    }
+
+    private static HashMap<String, Double> calculateMarginalProbabilities(HashMap<String, Integer> map, int totalCount)
+    {
+        HashMap<String, Double> result = new HashMap<String, Double>();
+        for(Map.Entry<String,Integer> entry : map.entrySet())
+        {
+            result.put(entry.getKey(), (double) entry.getValue()/totalCount);
+        }
+        return  result;
+    }
+
+
     // function to print HashMaps:
     private static void printHashMap(HashMap<String, Integer> map)
     {
@@ -125,33 +222,4 @@ public class Q2
         }
     }
 
-    private static HashMap<String, Double> calculateMarginalProbabilities(HashMap<String, Integer> map, int totalCount)
-    {
-        HashMap<String, Double> result = new HashMap<String, Double>();
-        for(Map.Entry<String,Integer> entry : map.entrySet())
-        {
-            result.put(entry.getKey(), (double) entry.getValue()/totalCount);
-        }
-        return  result;
-    }
-    /*
-    * function to calculate Normal conditional probabilities or No Smoothing probabilities.
-    * @param bigramsMap : hashmap of bigrams count
-    * @param unigram : hashmap of bigrams count
-    * calculates probability by dividing the bigram count with the count of the given word.
-    * */
-    private static HashMap<String, Double> calculateNoSmoothingProbabilities(HashMap<String,Integer>bigramsMap , HashMap<String,Integer>unigramsMap)
-    {
-        HashMap<String, Double> result = new HashMap<String, Double>();
-        for(Map.Entry<String,Integer> entry : bigramsMap.entrySet())
-        {
-            String[] tokens = entry.getKey().split("~~~");
-            //note the order - the first word will be "given" or "previous" & the 2nd word will be "current"
-            String givenWord = tokens[0];
-            String currentWord = tokens[1];
-            double probability = (double) entry.getValue()/unigramsMap.get(givenWord);
-            result.put((currentWord+ " | "+ givenWord),probability);
-        }
-        return result;
-    }
 }
