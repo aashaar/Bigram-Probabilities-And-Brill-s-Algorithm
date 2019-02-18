@@ -16,8 +16,9 @@ public class Q2
         int distinctBigramTotalCount = 0;
         HashMap<String, Integer> unigramsMap = new HashMap<String, Integer>();
         HashMap<String, Integer> bigramsMap = new HashMap<String, Integer>();
-        HashMap<String,Double> unigramMarginalProbabilities = new HashMap<String, Double>();
-        HashMap<String,Double> bigramMarginalProbabilities = new HashMap<String, Double>();
+        HashMap<String,Double> unigramMarginalProbabilitiesMap = new HashMap<String, Double>();
+        HashMap<String,Double> bigramMarginalProbabilitiesMap = new HashMap<String, Double>();
+        HashMap<String,Double> noSmoothingProbabilitiesMap = new HashMap<String, Double>();
         // create an output file
         try
         {
@@ -77,9 +78,12 @@ public class Q2
 
             //calculate marginal probabilities:
             //for unigrams:
-            unigramMarginalProbabilities = calculateMarginalProbabilities(unigramsMap,unigramsTotalCount);
+            unigramMarginalProbabilitiesMap = calculateMarginalProbabilities(unigramsMap,unigramsTotalCount);
             //for bigrams:
-            bigramMarginalProbabilities = calculateMarginalProbabilities(bigramsMap,bigramsTotalCount);
+            bigramMarginalProbabilitiesMap = calculateMarginalProbabilities(bigramsMap,bigramsTotalCount);
+
+            //calculating probabilties for No Smoothing:
+            calculateNoSmoothingProbabilities(bigramsMap,unigramsMap);
 
             s.close();
             //System.out.println(unigramsTotalCount);
@@ -87,9 +91,9 @@ public class Q2
             //System.out.println(bigramsTotalCount);
             //System.out.println(distinctBigramTotalCount);
             //printHashMap(unigramsMap);
-            printHashMap1(unigramMarginalProbabilities);
-
-            printHashMap1(bigramMarginalProbabilities);
+            printHashMap1(unigramMarginalProbabilitiesMap);
+            System.out.println("===========================================================================");
+            printHashMap1(bigramMarginalProbabilitiesMap);
         }
         catch (IOException e)
         {
@@ -127,5 +131,25 @@ public class Q2
             result.put(entry.getKey(), (double) entry.getValue()/totalCount);
         }
         return  result;
+    }
+    /*
+    * function to calculate Normal conditional probabilities or No Smoothing probabilities.
+    * @param bigramsMap : hashmap of bigrams count
+    * @param unigram : hashmap of bigrams count
+    * calculates probability by dividing the bigram count with the count of the given word.
+    * */
+    private static HashMap<String, Double> calculateNoSmoothingProbabilities(HashMap<String,Integer>bigramsMap , HashMap<String,Integer>unigramsMap)
+    {
+        HashMap<String, Double> result = new HashMap<String, Double>();
+        for(Map.Entry<String,Integer> entry : bigramsMap.entrySet())
+        {
+            String[] tokens = entry.getKey().split("~~~");
+            //note the order - the first word will be "given" or "previous" & the 2nd word will be "current"
+            String givenWord = tokens[0];
+            String currentWord = tokens[1];
+            double probability = (double) entry.getValue()/unigramsMap.get(givenWord);
+            result.put((currentWord+ " | "+ givenWord),probability);
+        }
+        return result;
     }
 }
