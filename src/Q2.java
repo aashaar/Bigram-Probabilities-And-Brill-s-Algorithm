@@ -22,6 +22,8 @@ public class Q2
         HashMap<String,Double> noSmoothingProbabilitiesMap = new HashMap<String, Double>();
         HashMap<String,Double> addOneSmoothingCountsMap = new HashMap<String, Double>();
         HashMap<String,Double> addOneSmoothingProbabilitiesMap = new HashMap<String, Double>();
+        HashMap<Integer,Integer> NBucket = new HashMap<Integer, Integer>();
+
         // create an output file
         try
         {
@@ -96,6 +98,8 @@ public class Q2
             //calculate Add-one Smoothing Probabilities
             addOneSmoothingProbabilitiesMap = calculateAddOneSmoothingProbabilities(bigramsMap,unigramsMap,distinctUnigramTotalCount);
 
+            //create N Buckets:
+            NBucket = createNBucket(bigramsMap);
 
 
             //close the scanner object:
@@ -120,6 +124,25 @@ public class Q2
         {
             e.printStackTrace();
         }
+    }
+
+
+    private static HashMap<Integer, Integer> createNBucket(HashMap<String, Integer> bigramsMap)
+    {
+        HashMap<Integer, Integer> result = new HashMap<Integer, Integer>();
+        for(Map.Entry<String,Integer> entry : bigramsMap.entrySet())
+        {
+            int n = entry.getValue();
+            if(result.containsKey(n))
+            {
+                result.put(n, result.get(n) + 1);
+            }
+            else
+            {
+                result.put(n,1);
+            }
+        }
+        return result;
     }
 
     /*
