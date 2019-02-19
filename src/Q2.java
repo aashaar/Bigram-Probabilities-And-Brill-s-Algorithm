@@ -23,6 +23,7 @@ public class Q2
         HashMap<String,Double> addOneSmoothingCountsMap = new HashMap<String, Double>();
         HashMap<String,Double> addOneSmoothingProbabilitiesMap = new HashMap<String, Double>();
         HashMap<Integer,Integer> nBucket = new HashMap<Integer, Integer>();
+        HashMap<String,Double> goodTuringCountsMap = new HashMap<String, Double>();
         HashMap<String, Double> goodTuringProbabilitiesMap = new HashMap<String, Double>();
 
         // create an output file
@@ -102,12 +103,17 @@ public class Q2
             //create N Buckets:
             nBucket = createNBucket(bigramsMap);
 
+            //calculate Good Turing Counts:
+            goodTuringCountsMap = calculateGoodTuringCounts(bigramsMap,nBucket,bigramsTotalCount);
+
             //calculate Good Turing Probabilities:
             goodTuringProbabilitiesMap = calculateGoodTuringProbabilities(bigramsMap,nBucket,bigramsTotalCount);
 
 
             //close the scanner object:
             s.close();
+            
+        // PRINTING & TESTING PART:
             //System.out.println(unigramsTotalCount);
             //System.out.println(distinctUnigramTotalCount);
             //System.out.println(bigramsTotalCount);
@@ -123,6 +129,10 @@ public class Q2
             //System.out.println("===========================================================================");
             printHashMap1(addOneSmoothingProbabilitiesMap);
             System.out.println("===========================================================================");
+            printHashMap1(goodTuringCountsMap);
+            System.out.println("===========================================================================");
+            printHashMap1(goodTuringProbabilitiesMap);
+            System.out.println("===========================================================================");
         }
         catch (IOException e)
         {
@@ -130,6 +140,38 @@ public class Q2
         }
     }
 
+    /*  function to calculate good turing probability:
+     *  it gets the count of the bigram - c and gets the corresponding Nc value from the bucket.
+     *  then gets the Nc+1 from the bucket and calculates the c* - cStarCount.
+     *  *  Returns a Hashmap of bigrams and their c* counts.
+     *  */
+    private static HashMap<String, Double> calculateGoodTuringCounts(HashMap<String,Integer>bigramsMap,HashMap<Integer, Integer> nBucket, int bigramsTotalCount)
+    {
+        double c0Probability = getNcValue(nBucket,1)/bigramsTotalCount;
+        HashMap<String, Double> result = new HashMap<String, Double>();
+        for(Map.Entry<String, Integer> entry : bigramsMap.entrySet())
+        {
+            String[] tokens = entry.getKey().split("~~~");
+            //note the order - the first word will be "given" or "previous" & the 2nd word will be "current"
+            String givenWord = tokens[0];
+            String currentWord = tokens[1];
+            int c = entry.getValue();
+            double nc = getNcValue(nBucket,c);
+            double ncPlus1 = getNcValue(nBucket,c+1);
+            double cStarCount = ((c+1) *ncPlus1)/(nc);
+            //note the order for storing counts is given word - current word
+            result.put((givenWord +"~~~" + currentWord),cStarCount);
+        }
+        return result;
+    }
+
+
+
+    /*  function to calculate good turing probability:
+     *  it gets the count of the bigram - c and gets the corresponding Nc value from the bucket.
+     *  then gets the Nc+1 from the bucket and calculates the probability.
+     *  Returns a Hashmap of bigrams and their good turing probabilities
+     *  */
     private static HashMap<String, Double> calculateGoodTuringProbabilities(HashMap<String,Integer>bigramsMap,HashMap<Integer, Integer> nBucket, int bigramsTotalCount)
     {
         double c0Probability = getNcValue(nBucket,1)/bigramsTotalCount;
@@ -144,6 +186,7 @@ public class Q2
             double nc = getNcValue(nBucket,c);
             double ncPlus1 = getNcValue(nBucket,c+1);
             double probability = ((c+1) *ncPlus1)/(nc * bigramsTotalCount);
+            //note the order for storing probabilities is current word - given word
             result.put((currentWord +" | " + givenWord),probability);
         }
         return result;
@@ -198,6 +241,7 @@ public class Q2
             String currentWord = tokens[1];
             int denominator = (unigramsMap.get(givenWord))+distinctUnigramTotalCount;
             double reconstitutedCount = ((double) entry.getValue() +1) * unigramsMap.get(givenWord)/denominator;
+            //note the order for storing counts is given word - current word
             result.put((givenWord +"~~~" + currentWord),reconstitutedCount);
         }
         return result;
@@ -220,6 +264,7 @@ public class Q2
             String currentWord = tokens[1];
             int denominator = (unigramsMap.get(givenWord))+distinctUnigramTotalCount;
             double probability = ((double) entry.getValue() +1) /denominator;
+            //note the order for storing probabilities is current word - given word
             result.put((currentWord +" | " + givenWord),probability);
         }
         return result;
@@ -242,6 +287,7 @@ public class Q2
             String givenWord = tokens[0];
             String currentWord = tokens[1];
             double probability = (double) entry.getValue()/unigramsMap.get(givenWord);
+            //note the order for storing probabilities is current word - given word
             result.put((currentWord+ " | "+ givenWord),probability);
         }
         return result;
