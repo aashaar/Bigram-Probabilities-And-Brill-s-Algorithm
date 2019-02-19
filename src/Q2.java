@@ -22,7 +22,8 @@ public class Q2
         HashMap<String,Double> noSmoothingProbabilitiesMap = new HashMap<String, Double>();
         HashMap<String,Double> addOneSmoothingCountsMap = new HashMap<String, Double>();
         HashMap<String,Double> addOneSmoothingProbabilitiesMap = new HashMap<String, Double>();
-        HashMap<Integer,Integer> NBucket = new HashMap<Integer, Integer>();
+        HashMap<Integer,Integer> nBucket = new HashMap<Integer, Integer>();
+        HashMap<String, Double> goodTuringProbabilitiesMap = new HashMap<String, Double>();
 
         // create an output file
         try
@@ -99,7 +100,10 @@ public class Q2
             addOneSmoothingProbabilitiesMap = calculateAddOneSmoothingProbabilities(bigramsMap,unigramsMap,distinctUnigramTotalCount);
 
             //create N Buckets:
-            NBucket = createNBucket(bigramsMap);
+            nBucket = createNBucket(bigramsMap);
+
+            //calculate Good Turing Probabilities:
+            goodTuringProbabilitiesMap = calculateGoodTuringProbabilities(bigramsMap,nBucket,bigramsTotalCount);
 
 
             //close the scanner object:
@@ -126,7 +130,39 @@ public class Q2
         }
     }
 
+    private static HashMap<String, Double> calculateGoodTuringProbabilities(HashMap<String,Integer>bigramsMap,HashMap<Integer, Integer> nBucket, int bigramsTotalCount)
+    {
+        double c0Probability = getNcValue(nBucket,1)/bigramsTotalCount;
+        HashMap<String, Double> result = new HashMap<String, Double>();
+        for(Map.Entry<String, Integer> entry : bigramsMap.entrySet())
+        {
+            String[] tokens = entry.getKey().split("~~~");
+            //note the order - the first word will be "given" or "previous" & the 2nd word will be "current"
+            String givenWord = tokens[0];
+            String currentWord = tokens[1];
+            int c = entry.getValue();
+            double nc = getNcValue(nBucket,c);
+            double ncPlus1 = getNcValue(nBucket,c+1);
+            double probability = ((c+1) *ncPlus1)/(nc * bigramsTotalCount);
+            result.put((currentWord +" | " + givenWord),probability);
+        }
+        return result;
+    }
 
+    // function to fetch values from the buckets:
+    private static double getNcValue(HashMap<Integer, Integer> nBucket, int i)
+    {
+        if(nBucket.containsKey(i))
+        {
+            return nBucket.get(i);
+        }
+        else
+        {
+            return 0;
+        }
+    }
+
+    // function to create buckets for Good Turning Discount Smoothing:
     private static HashMap<Integer, Integer> createNBucket(HashMap<String, Integer> bigramsMap)
     {
         HashMap<Integer, Integer> result = new HashMap<Integer, Integer>();
