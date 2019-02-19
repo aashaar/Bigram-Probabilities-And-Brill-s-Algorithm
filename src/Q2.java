@@ -4,11 +4,11 @@ import java.util.function.DoubleUnaryOperator;
 
 public class Q2
 {
-    // pass the input file path as the argument while running this code.
-    static FileWriter output = null;
 
     public static void main(String[] args)
     {
+        // pass the input file path as the argument while running this code.
+        FileWriter output = null;
         String line = "";
         String previousToken = null;
         int unigramsTotalCount = 0;
@@ -62,7 +62,7 @@ public class Q2
                     if(previousToken != null)
                     {
                         bigramsTotalCount++;
-                        String pair = previousToken + "~~~" + token;
+                        String pair = token + " | " + previousToken;
                         if(bigramsMap.containsKey(pair))
                         {
                             int pairCount = bigramsMap.get(pair);
@@ -104,15 +104,18 @@ public class Q2
             //System.out.println(distinctUnigramTotalCount);
             //System.out.println(bigramsTotalCount);
             //System.out.println(distinctBigramTotalCount);
-            //printHashMap(unigramsMap);
-            printHashMap1(unigramMarginalProbabilitiesMap);
-            System.out.println("===========================================================================");
-            printHashMap1(bigramMarginalProbabilitiesMap);
-            System.out.println("===========================================================================");
+            //printHashMap(bigramsMap);
+            //printHashMap1(unigramMarginalProbabilitiesMap);
+            //System.out.println("===========================================================================");
+            //printHashMap1(bigramMarginalProbabilitiesMap);
+           // System.out.println("===========================================================================");
+            System.out.println("No smoothing probabilities:");
             printHashMap1(noSmoothingProbabilitiesMap);
             System.out.println("===========================================================================");
+            System.out.println("Add one smoothing count: ");
             printHashMap1(addOneSmoothingCountsMap);
             System.out.println("===========================================================================");
+            System.out.println("Add one smoothing probabilities:");
             printHashMap1(addOneSmoothingProbabilitiesMap);
             System.out.println("===========================================================================");
         }
@@ -133,13 +136,12 @@ public class Q2
         HashMap<String, Double> result = new HashMap<String, Double>();
         for(Map.Entry<String,Integer> entry : bigramsMap.entrySet())
         {
-            String[] tokens = entry.getKey().split("~~~");
-            //note the order - the first word will be "given" or "previous" & the 2nd word will be "current"
-            String givenWord = tokens[0];
-            String currentWord = tokens[1];
+            String[] tokens = entry.getKey().split(" \\| ");
+            String currentWord = tokens[0];
+            String givenWord = tokens[1];
             int denominator = (unigramsMap.get(givenWord))+distinctUnigramTotalCount;
             double reconstitutedCount = ((double) entry.getValue() +1) * unigramsMap.get(givenWord)/denominator;
-            result.put((givenWord +"~~~" + currentWord),reconstitutedCount);
+            result.put((currentWord +" | " + givenWord),reconstitutedCount);
         }
         return result;
     }
@@ -155,10 +157,9 @@ public class Q2
         HashMap<String, Double> result = new HashMap<String, Double>();
         for(Map.Entry<String,Integer> entry : bigramsMap.entrySet())
         {
-            String[] tokens = entry.getKey().split("~~~");
-            //note the order - the first word will be "given" or "previous" & the 2nd word will be "current"
-            String givenWord = tokens[0];
-            String currentWord = tokens[1];
+            String[] tokens = entry.getKey().split(" \\| ");
+            String currentWord = tokens[0];
+            String givenWord = tokens[1];
             int denominator = (unigramsMap.get(givenWord))+distinctUnigramTotalCount;
             double probability = ((double) entry.getValue() +1) /denominator;
             result.put((currentWord +" | " + givenWord),probability);
@@ -178,10 +179,9 @@ public class Q2
         HashMap<String, Double> result = new HashMap<String, Double>();
         for(Map.Entry<String,Integer> entry : bigramsMap.entrySet())
         {
-            String[] tokens = entry.getKey().split("~~~");
-            //note the order - the first word will be "given" or "previous" & the 2nd word will be "current"
-            String givenWord = tokens[0];
-            String currentWord = tokens[1];
+            String[] tokens = entry.getKey().split(" \\| ");
+            String currentWord = tokens[0];
+            String givenWord = tokens[1];
             double probability = (double) entry.getValue()/unigramsMap.get(givenWord);
             result.put((currentWord+ " | "+ givenWord),probability);
         }
