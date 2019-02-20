@@ -29,12 +29,12 @@ public class Q2
         // create an output file
         try
         {
-            output = new FileWriter("Q2_output",false);
+            output = new FileWriter("Q2_output.txt",false);
 
             // read input file:
             File file = new File(args[0]);
-            //user delimitter (space-.-space-space 0r .-space-'') :
-            Scanner s = new Scanner(file).useDelimiter(" .  |. ''");
+            //user delimitter (space-.-space-space 0r .-space-''-space--space) :
+            Scanner s = new Scanner(file).useDelimiter(" .  |. ''  ");
             int n =2;
             //while(n!=0)
             while(s.hasNext())
@@ -109,10 +109,11 @@ public class Q2
             //calculate Good Turing Probabilities:
             goodTuringProbabilitiesMap = calculateGoodTuringProbabilities(bigramsMap,nBucket,bigramsTotalCount);
 
+            printUnigramCounts(unigramsMap);
 
             //close the scanner object:
             s.close();
-            
+
         // PRINTING & TESTING PART:
             //System.out.println(unigramsTotalCount);
             //System.out.println(distinctUnigramTotalCount);
@@ -133,12 +134,14 @@ public class Q2
             System.out.println("===========================================================================");
             printHashMap1(goodTuringProbabilitiesMap);
             System.out.println("===========================================================================");
+
         }
         catch (IOException e)
         {
             e.printStackTrace();
         }
     }
+
 
     /*  function to calculate good turing probability:
      *  it gets the count of the bigram - c and gets the corresponding Nc value from the bucket.
@@ -303,6 +306,29 @@ public class Q2
         return  result;
     }
 
+    //write word counts to the file:
+    private static void printUnigramCounts(HashMap<String, Integer> unigramsMap)
+    {
+        writeToFile("*********************Unigram Counts*********************");
+        for(Map.Entry<String, Integer> entry : unigramsMap.entrySet())
+        {
+            writeToFile("Unigram Count -> " + entry.getKey() + " = "+ entry.getValue());
+        }
+    }
+
+    // write a line to file
+    public static void writeToFile(String string)
+    {
+        try
+        {
+            output.write(string + "\n");
+
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+    }
 
     // function to print HashMaps:
     private static void printHashMap(HashMap<String, Integer> map)
