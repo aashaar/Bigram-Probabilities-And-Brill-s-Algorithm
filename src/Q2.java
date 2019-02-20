@@ -109,10 +109,21 @@ public class Q2
             //calculate Good Turing Probabilities:
             goodTuringProbabilitiesMap = calculateGoodTuringProbabilities(bigramsMap,nBucket,bigramsTotalCount);
 
-            writeUnigramCounts(unigramsMap);
+            writeUnigramCounts(unigramsMap,distinctUnigramTotalCount);
+            writeBigramCounts(bigramsMap,distinctBigramTotalCount);
+            writeNoSmoothingProbabilities(noSmoothingProbabilitiesMap);
+            writeAddOneSmoothingReconstitutedCounts(addOneSmoothingCountsMap);
+            writeAddOneSmoothingProbabilities(addOneSmoothingProbabilitiesMap);
+            writeGoodTuringCounts(goodTuringCountsMap);
+            writeGoodTuringProbabilities(goodTuringProbabilitiesMap);
 
+            writeToFile("********************* END OF FILE *********************");
             //close the scanner object:
             s.close();
+            System.out.println("Input File Scanner closed");
+            //close the File Writer Object
+            output.close();
+            System.out.println("Output File Writer closed");
 
         // PRINTING & TESTING PART:
             //System.out.println(unigramsTotalCount);
@@ -121,6 +132,7 @@ public class Q2
             //System.out.println(distinctBigramTotalCount);
             //printHashMap(unigramsMap);
             //printHashMap1(unigramMarginalProbabilitiesMap);
+            /*
             System.out.println("===========================================================================");
             //printHashMap1(bigramMarginalProbabilitiesMap);
             //System.out.println("===========================================================================");
@@ -134,7 +146,7 @@ public class Q2
             System.out.println("===========================================================================");
             printHashMap1(goodTuringProbabilitiesMap);
             System.out.println("===========================================================================");
-
+            */
         }
         catch (IOException e)
         {
@@ -306,15 +318,8 @@ public class Q2
         return  result;
     }
 
-    //write word counts to the file:
-    private static void writeUnigramCounts(HashMap<String, Integer> unigramsMap)
-    {
-        writeToFile("*********************Unigram Counts*********************");
-        for(Map.Entry<String, Integer> entry : unigramsMap.entrySet())
-        {
-            writeToFile("Unigram Count -> " + entry.getKey() + " = "+ entry.getValue());
-        }
-    }
+
+//********** Writing and printing functions *****************
 
     // write a line to file
     public static void writeToFile(String string)
@@ -329,6 +334,108 @@ public class Q2
             e.printStackTrace();
         }
     }
+
+    //function to write word counts(unigram counts) to the file:
+    private static void writeUnigramCounts(HashMap<String, Integer> unigramsMap, int distinctUnigramTotalCount)
+    {
+        System.out.print("Writing Unigram counts to the file ");
+        writeToFile("*********************Unigram Counts*********************");
+        writeToFile("Count of distinct unigrams/words = "+ distinctUnigramTotalCount);
+        for(Map.Entry<String, Integer> entry : unigramsMap.entrySet())
+        {
+            writeToFile("Unigram Count -> (" + entry.getKey() + ") = "+ entry.getValue());
+        }
+        System.out.println(" - - - - - - > COMPLETE!");
+    }
+
+    //function to write bigram counts to the file:
+    private static void writeBigramCounts(HashMap<String, Integer> bigramsMap, int distinctBigramTotalCount)
+    {
+        System.out.print("Writing Bigram counts to the file ");
+        writeToFile("*********************Bigram Counts*********************");
+        writeToFile("Count of distinct bigrams = "+ distinctBigramTotalCount);
+        for(Map.Entry<String, Integer> entry : bigramsMap.entrySet())
+        {
+            String[] tokens = entry.getKey().split("~~~");
+            //note the order - the first word will be "given" or "previous" & the 2nd word will be "current"
+            String givenWord = tokens[0];
+            String currentWord = tokens[1];
+            writeToFile("Bigram Count -> (" + currentWord+ " | "+ givenWord + ") = "+ entry.getValue());
+        }
+        System.out.println(" - - - - - - > COMPLETE!");
+    }
+
+    //function to write No smoothing or normal conditional probabilities to the file:
+    private static void writeNoSmoothingProbabilities(HashMap<String, Double> noSmoothingProbabilitiesMap)
+    {
+        System.out.print("Writing No Smoothing (Normal Conditional) Probabilities to the file ");
+        writeToFile("*********************No Smoothing (Normal Conditional) Probabilities*********************");
+        for(Map.Entry<String, Double> entry : noSmoothingProbabilitiesMap.entrySet())
+        {
+            writeToFile("No Smoothing Prob -> (" + entry.getKey() + ") = "+ entry.getValue());
+        }
+        System.out.println(" - - - - - - > COMPLETE!");
+    }
+
+    //function to write Add One Smoothing Reconstituted Counts to the file:
+    private static void writeAddOneSmoothingReconstitutedCounts(HashMap<String, Double>addOneSmoothingCountsMap)
+    {
+        System.out.print("Writing Add-One Smoothing Reconstituted counts to the file ");
+        writeToFile("*********************Add-One Smoothing Reconstituted Counts*********************");
+        for(Map.Entry<String, Double> entry : addOneSmoothingCountsMap.entrySet())
+        {
+            String[] tokens = entry.getKey().split("~~~");
+            //note the order - the first word will be "given" or "previous" & the 2nd word will be "current"
+            String givenWord = tokens[0];
+            String currentWord = tokens[1];
+            writeToFile("Add-One Smoothing Reconstituted Count -> (" + currentWord+ " | "+ givenWord + ") = "+ entry.getValue());
+        }
+        System.out.println(" - - - - - - > COMPLETE!");
+    }
+
+    //function to write Add-One Smoothing Probabilities to the file:
+    private static void writeAddOneSmoothingProbabilities(HashMap<String, Double> addOneSmoothingProbabilitiesMap)
+    {
+        System.out.print("Writing Add-One Smoothing Probabilities to the file ");
+        writeToFile("*********************Add-One Smoothing Probabilities*********************");
+        for(Map.Entry<String, Double> entry : addOneSmoothingProbabilitiesMap.entrySet())
+        {
+            writeToFile("Add-One Smoothing Prob -> (" + entry.getKey() + ") = "+ entry.getValue());
+        }
+        System.out.println(" - - - - - - > COMPLETE!");
+    }
+
+    ///////////////////////////
+    //function to write Good Turing Smoothing Counts to the file:
+    private static void writeGoodTuringCounts(HashMap<String, Double>goodTuringCountsMap)
+    {
+        System.out.print("Writing Good Turing Smoothing Reconstituted counts to the file ");
+        writeToFile("*********************Good Turing Smoothing Reconstituted Counts*********************");
+        for(Map.Entry<String, Double> entry : goodTuringCountsMap.entrySet())
+        {
+            String[] tokens = entry.getKey().split("~~~");
+            //note the order - the first word will be "given" or "previous" & the 2nd word will be "current"
+            String givenWord = tokens[0];
+            String currentWord = tokens[1];
+            writeToFile("Good Turing Count -> (" + currentWord+ " | "+ givenWord + ") = "+ entry.getValue());
+        }
+        System.out.println(" - - - - - - > COMPLETE!");
+    }
+
+    //function to write Good Turing Smoothing Probabilities to the file:
+    private static void writeGoodTuringProbabilities(HashMap<String, Double> goodTuringProbabilitiesMap)
+    {
+        System.out.print("Writing Good Turing Smoothing Probabilities to the file ");
+        writeToFile("*********************Good Turing Smoothing Probabilities*********************");
+        for(Map.Entry<String, Double> entry : goodTuringProbabilitiesMap.entrySet())
+        {
+            writeToFile("Good Turing Smoothing Prob -> (" + entry.getKey() + ") = "+ entry.getValue());
+        }
+        System.out.println(" - - - - - - > COMPLETE!");
+    }
+
+
+
 
     // function to print HashMaps:
     private static void printHashMap(HashMap<String, Integer> map)
