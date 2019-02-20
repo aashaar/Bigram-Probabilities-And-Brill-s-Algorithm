@@ -109,7 +109,7 @@ public class Q2
             //calculate Good Turing Probabilities:
             goodTuringProbabilitiesMap = calculateGoodTuringProbabilities(bigramsMap,nBucket,bigramsTotalCount);
 
-            printUnigramCounts(unigramsMap);
+            writeUnigramCounts(unigramsMap);
 
             //close the scanner object:
             s.close();
@@ -307,7 +307,7 @@ public class Q2
     }
 
     //write word counts to the file:
-    private static void printUnigramCounts(HashMap<String, Integer> unigramsMap)
+    private static void writeUnigramCounts(HashMap<String, Integer> unigramsMap)
     {
         writeToFile("*********************Unigram Counts*********************");
         for(Map.Entry<String, Integer> entry : unigramsMap.entrySet())
