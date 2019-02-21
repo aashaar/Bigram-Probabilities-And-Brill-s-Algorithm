@@ -41,7 +41,7 @@ public class Q2
             {
                 n--;
                 // add . to the end of the sentence:
-                String s1 = s.next() + " .";
+                String s1 = s.next();
                 //System.getProperty("line.terminator") to get the line break in any OS:
                 s1 = s1.replace(System.getProperty("line.separator")," ");
                 //System.out.println(s1);
@@ -162,7 +162,7 @@ public class Q2
      *  */
     private static HashMap<String, Double> calculateGoodTuringCounts(HashMap<String,Integer>bigramsMap,HashMap<Integer, Integer> nBucket, int bigramsTotalCount)
     {
-        double c0Probability = getNcValue(nBucket,1)/bigramsTotalCount;
+        //TODO: find N0 count
         HashMap<String, Double> result = new HashMap<String, Double>();
         for(Map.Entry<String, Integer> entry : bigramsMap.entrySet())
         {
