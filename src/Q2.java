@@ -39,13 +39,13 @@ public class Q2
 
             // read input file:
             File file = new File(args[0]);
-            //user delimitter (space-.-space-space 0r .-space-''-space--space) :
+            //user delimiter (space-.-space-space 0r .-space-''-space--space) :
             Scanner s = new Scanner(file).useDelimiter(" .  |. ''  ");
-            int n =2;
+            //int n =2;
             //while(n!=0)
             while(s.hasNext())
             {
-                n--;
+                //n--;
                 // add . to the end of the sentence:
                 String s1 = s.next();
                 //System.getProperty("line.terminator") to get the line break in any OS:
