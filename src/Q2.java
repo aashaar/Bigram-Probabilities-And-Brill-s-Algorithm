@@ -1,14 +1,20 @@
 import java.io.*;
 import java.util.*;
-import java.util.function.DoubleUnaryOperator;
+
 
 public class Q2
 {
-    // pass the input file path as the argument while running this code.
+
     static FileWriter output = null;
 
     public static void main(String[] args)
     {
+        // pass the input file path as the argument while running this code.
+        if(args.length ==0)
+        {
+            System.out.println("ERROR: Missing input file path in arguments!");
+            return;
+        }
         String line = "";
         String previousToken = null;
         int unigramsTotalCount = 0;
