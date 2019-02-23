@@ -39,8 +39,8 @@ public class Q2
 
             // read input file:
             File file = new File(args[0]);
-            //user delimiter (space-.-space-space 0r .-space-''-space--space) :
-            Scanner s = new Scanner(file).useDelimiter(" .  |. ''  ");
+            //user delimiter (space-.-space) :
+            Scanner s = new Scanner(file).useDelimiter(" . ");
             //int n =2;
             //while(n!=0)
             while(s.hasNext())
