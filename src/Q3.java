@@ -36,7 +36,7 @@ public class Q3
             //while (n!=0)
             while ((line = b.readLine()) != null)
             {
-                line = b.readLine();
+                //line = b.readLine();
                 //n--;
 
                 for(String pair: line.split(" "))
@@ -163,7 +163,7 @@ public class Q3
     {
         for(Map.Entry<String, HashMap<String, Integer>> entry : wordsWithTagsMap.entrySet())
         {
-            int maxFrequency = Integer.MIN_VALUE;
+            int maxFrequency = -1;
             String maxFrequencyTag = "";
             String word = entry.getKey();
             //tagWithCount will have (Key - Tag & Value - count of that tag) :
@@ -196,7 +196,7 @@ public class Q3
             wordsWithTagsMap.put(word, tagsAndCountsMap);
         }
         //Assign the proper count in the HashMap:
-            HashMap<String, Integer> tagsAndCountsMap = wordsWithTagsMap.get(word);
+        HashMap<String, Integer> tagsAndCountsMap = wordsWithTagsMap.get(word);
         int count = (tagsAndCountsMap.containsKey(tag))? tagsAndCountsMap.get(tag) : 0;
         tagsAndCountsMap.put(tag, count + 1 );
 
@@ -235,7 +235,7 @@ public class Q3
         }
 
         public String printRule() {
-            return "If previous tag is " + previousTag + " and current tag is " + fromTag + " then, change the current tag to " + toTag + " (Score: " + score + ")";
+            return "If previous tag is " + previousTag + " and current tag is " + fromTag + " then, change the current tag to " + toTag + " (Score: " + (score) + ")";
         }
     }
 
