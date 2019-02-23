@@ -12,6 +12,8 @@ public class Q3
     static String fromTag = "NN";
     static String[] toTagsArray = {"JJ","VB"};
     static List<Transformation> transformationsList = new ArrayList<>();
+    static List<String> sentenceWordsList;
+    static List<String> sentenceTagList;
 
     public static void main(String[] args)
     {
@@ -19,7 +21,11 @@ public class Q3
         wordsWithTagsMap = new HashMap<>();
         wordsList = new ArrayList<>();
         correctTagList = new ArrayList<>();
+        sentenceWordsList = new ArrayList<>();
+        sentenceTagList = new ArrayList<>();
         String line ="";
+        String inputSentence = "The_DT standard_?? Turbo_NN engine_NN is_VBZ hard_JJ to_TO work_??";
+        boolean flag = false;
 
 
         // pass the input file path as the argument while running this code.
@@ -61,8 +67,74 @@ public class Q3
                 currentTagList.add(wordWithMostFrequentTagMap.get(word));
             }
 
-            //TODO:
+            //open filewriter object:
+            output = new FileWriter("Q3_output.txt",false);
+
+            //TODO: Get best transformation rules for the corupus"
+            System.out.println("************* BRill's Tagging **************");
+            System.out.println("Best Rules: ");
             getTransformations();
+
+            //TODO: process the input sentence:
+            System.out.println("\nGiven input sentence:\n"+inputSentence);
+
+            //TODO: Replacing ?? with most probable tags learnt:
+            System.out.println("\nReplacing ?? with most probable tags learnt:");
+            for(String pair: inputSentence.split(" "))
+            {
+                String word = pair.split("_")[0];
+                sentenceWordsList.add(word);
+                String tag = pair.split("_")[1];
+                String tag1 = "";
+                //replace ?? tags with most probabable tags learnt from the corpus
+                if(tag.equals("??"))
+                {
+                    tag = wordWithMostFrequentTagMap.get(word);
+                }
+                sentenceTagList.add(tag);
+
+                System.out.print(word+"_"+tag+" ");
+            }
+
+            System.out.println("\n\nApplying learnt rules to the sentence: ");
+
+            for(int i =0; i<sentenceTagList.size();i++)
+            {
+                for(Transformation transformation : transformationsList)
+                {
+                    //to ensure negative score rules are not being applied:
+                    if(transformation.score >0)
+                    {
+                        if(sentenceTagList.get(i) == transformation.fromTag)
+                        {
+                            if(sentenceTagList.get(i-1) == transformation.previousTag)
+                            {
+                                sentenceTagList.set(i,transformation.toTag);
+                                flag = true;
+                            }
+                        }
+                    }
+                }
+            }
+            if(!flag)
+            {
+                System.out.println("*** No rules applied to the sentence as it doesn't satisfy the rules' criterion.");
+            }
+            System.out.println("\nFinal Answer:");
+            for(int i=0;i<sentenceWordsList.size();i++)
+            {
+                System.out.print(sentenceWordsList.get(i)+"_"+sentenceTagList.get(i)+" ");
+            }
+
+
+
+
+
+
+            //close buffer reader and File writer
+            b.close();
+            output.close();
+
 
             //*********** PRINTING AND TESTING PART *****************
             //printHashMap(wordsWithTagsMap);
@@ -82,6 +154,7 @@ public class Q3
         {
             if(transformation != null)
             {
+                //writeToFile(transformation.printRule());
                 System.out.println(transformation.printRule());
             }
             else
@@ -235,7 +308,16 @@ public class Q3
         }
 
         public String printRule() {
-            return "If previous tag is " + previousTag + " and current tag is " + fromTag + " then, change the current tag to " + toTag + " (Score: " + (score) + ")";
+
+            //return "If previous tag is " + previousTag + " and current tag is " + fromTag + " then, change the current tag to " + toTag;
+            if(score<0)
+            {
+                return "If previous tag is " + previousTag + " and current tag is " + fromTag + " then, change the current tag to " + toTag + " --> *** WARNING: This rule has a negative score.";
+            }
+            else
+            {
+                return "If previous tag is " + previousTag + " and current tag is " + fromTag + " then, change the current tag to " + toTag;
+            }
         }
     }
 
@@ -247,6 +329,20 @@ public class Q3
         {
             this.tag = tag;
             this.score = score;
+        }
+    }
+
+    // write a line to file
+    public static void writeToFile(String string)
+    {
+        try
+        {
+            output.write(string + "\n");
+
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
         }
     }
 }

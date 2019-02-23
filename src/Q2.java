@@ -206,7 +206,7 @@ public class Q2
             int c = entry.getValue();
             double nc = getNcValue(nBucket,c);
             double ncPlus1 = getNcValue(nBucket,c+1);
-            double probability = ((c+1) *ncPlus1)/(nc * bigramsTotalCount);
+            double probability = ((c+1) * ncPlus1)/(nc * bigramsTotalCount);
             //note the order for storing probabilities is current word - given word
             result.put((currentWord +" | " + givenWord),probability);
         }
