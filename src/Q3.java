@@ -32,12 +32,12 @@ public class Q3
         {
             File file = new File(args[0]);
             BufferedReader b = new BufferedReader(new FileReader(file));
-            int n = 3;
-            //while ((line = b.readLine()) != null)
-            while (n!=0)
+            //int n = 3;
+            //while (n!=0)
+            while ((line = b.readLine()) != null)
             {
                 line = b.readLine();
-                n--;
+                //n--;
 
                 for(String pair: line.split(" "))
                 {
@@ -65,7 +65,7 @@ public class Q3
             getTransformations();
 
             //*********** PRINTING AND TESTING PART *****************
-            printHashMap(wordsWithTagsMap);
+            //printHashMap(wordsWithTagsMap);
         }
         catch (IOException e)
         {
@@ -227,7 +227,7 @@ public class Q3
         String previousTag, fromTag, toTag;
 
 
-        public Transformation(String prevTag, String fromTag, String toTag, long score) {
+        public Transformation(String previousTag, String fromTag, String toTag, long score) {
             this.previousTag = previousTag;
             this.fromTag = fromTag;
             this.toTag = toTag;
