@@ -15,7 +15,6 @@ public class Q2
             System.out.println("ERROR: Missing input file path in arguments!");
             return;
         }
-        String line = "";
         String previousToken = null;
         int unigramsTotalCount = 0;
         int distinctUnigramTotalCount = 0;
@@ -39,8 +38,8 @@ public class Q2
 
             // read input file:
             File file = new File(args[0]);
-            //user delimiter (space-.-space) :
-            Scanner s = new Scanner(file).useDelimiter(" . ");
+            //user delimiter (space-.-spacespace) :
+            Scanner s = new Scanner(file).useDelimiter(" .  ");
             //int n =2;
             //while(n!=0)
             while(s.hasNext())
@@ -52,7 +51,7 @@ public class Q2
                 s1 = s1.replace(System.getProperty("line.separator")," ");
                 //System.out.println(s1);
                 // split by white spaces & tab :
-                for (String token : s1.split("  | |\\t|\\r"))
+                for (String token : s1.split("  | |\\t"))
                 {
                     //System.out.println(previousToken+" | "+token);
 
@@ -89,12 +88,11 @@ public class Q2
                 previousToken = null;
             }
 
-            //TODO: calculate marginal probabilities:
-
-            //TODO: for unigrams:
+            //calculate marginal probabilities:
+            //for unigrams:
             //unigramMarginalProbabilitiesMap = calculateMarginalProbabilities(unigramsMap,unigramsTotalCount);
 
-            //TODO: for bigrams:
+            //for bigrams:
             //bigramMarginalProbabilitiesMap = calculateMarginalProbabilities(bigramsMap,bigramsTotalCount);
 
             //TODO: calculating probabilties for No Smoothing:
