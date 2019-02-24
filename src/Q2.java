@@ -92,10 +92,10 @@ public class Q2
             //TODO: calculate marginal probabilities:
 
             //TODO: for unigrams:
-            unigramMarginalProbabilitiesMap = calculateMarginalProbabilities(unigramsMap,unigramsTotalCount);
+            //unigramMarginalProbabilitiesMap = calculateMarginalProbabilities(unigramsMap,unigramsTotalCount);
 
             //TODO: for bigrams:
-            bigramMarginalProbabilitiesMap = calculateMarginalProbabilities(bigramsMap,bigramsTotalCount);
+            //bigramMarginalProbabilitiesMap = calculateMarginalProbabilities(bigramsMap,bigramsTotalCount);
 
             //TODO: calculating probabilties for No Smoothing:
             noSmoothingProbabilitiesMap=calculateNoSmoothingProbabilities(bigramsMap,unigramsMap);
