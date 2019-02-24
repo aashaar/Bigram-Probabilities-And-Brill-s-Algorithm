@@ -3,6 +3,7 @@
 
 >> Java version : 9.0.1
 >> IDE used: IntelliJ IDEA Community Edition 2017.3
+>> OS: Windows 10
 
 >> For Ques.2 : Bigram Probabilities:
 
