@@ -7,6 +7,7 @@ public class Q2
 
     static FileWriter output = null;
     static int nMax =0;
+    static int unigramsTotalCount = 0;
     public static void main(String[] args)
     {
         // pass the input file path as the argument while running this code.
@@ -16,7 +17,7 @@ public class Q2
             return;
         }
         String previousToken = null;
-        int unigramsTotalCount = 0;
+        //int unigramsTotalCount = 0;
         int distinctUnigramTotalCount = 0;
         int bigramsTotalCount = 0;
         int distinctBigramTotalCount = 0;
@@ -265,6 +266,7 @@ public class Q2
             String currentWord = tokens[1];
             int denominator = (unigramsMap.get(givenWord))+distinctUnigramTotalCount;
             double reconstitutedCount = ((double) entry.getValue() +1) * unigramsMap.get(givenWord)/denominator;
+            //double reconstitutedCount = (((double) entry.getValue()+1)*unigramsTotalCount)/(unigramsTotalCount+distinctUnigramTotalCount);
             //note the order for storing counts is given word - current word
             result.put((givenWord +"~~~" + currentWord),reconstitutedCount);
         }
