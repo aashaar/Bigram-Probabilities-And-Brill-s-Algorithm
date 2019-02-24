@@ -89,30 +89,30 @@ public class Q2
                 previousToken = null;
             }
 
-            //calculate marginal probabilities:
+            //TODO: calculate marginal probabilities:
 
-            //for unigrams:
+            //TODO: for unigrams:
             unigramMarginalProbabilitiesMap = calculateMarginalProbabilities(unigramsMap,unigramsTotalCount);
 
-            //for bigrams:
+            //TODO: for bigrams:
             bigramMarginalProbabilitiesMap = calculateMarginalProbabilities(bigramsMap,bigramsTotalCount);
 
-            //calculating probabilties for No Smoothing:
+            //TODO: calculating probabilties for No Smoothing:
             noSmoothingProbabilitiesMap=calculateNoSmoothingProbabilities(bigramsMap,unigramsMap);
 
-            //calculate Add-One Smoothing count:
+            //TODO: calculate Add-One Smoothing count:
             addOneSmoothingCountsMap = calculateAddOneSmoothingReconstitutedCounts(bigramsMap,unigramsMap,distinctUnigramTotalCount);
 
-            //calculate Add-one Smoothing Probabilities
+            //TODO: calculate Add-one Smoothing Probabilities
             addOneSmoothingProbabilitiesMap = calculateAddOneSmoothingProbabilities(bigramsMap,unigramsMap,distinctUnigramTotalCount);
 
-            //create N Buckets:
+            //TODO: create N Buckets:
             nBucket = createNBucket(bigramsMap);
 
-            //calculate Good Turing Counts:
+            //TODO: calculate Good Turing Counts:
             goodTuringCountsMap = calculateGoodTuringCounts(bigramsMap,nBucket,bigramsTotalCount);
 
-            //calculate Good Turing Probabilities:
+            //TODO: calculate Good Turing Probabilities:
             goodTuringProbabilitiesMap = calculateGoodTuringProbabilities(bigramsMap,nBucket,bigramsTotalCount);
 
             writeUnigramCounts(unigramsMap,distinctUnigramTotalCount);
@@ -124,10 +124,10 @@ public class Q2
             writeGoodTuringProbabilities(goodTuringProbabilitiesMap);
 
             writeToFile("********************* END OF FILE *********************");
-            //close the scanner object:
+            //TODO: close the scanner object:
             s.close();
             System.out.println("Input File Scanner closed");
-            //close the File Writer Object
+            //TODO: close the File Writer Object
             output.close();
             System.out.println("Output File Writer closed");
 

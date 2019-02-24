@@ -134,13 +134,18 @@ public class Q3 {
             calculateTagGivenPreviousTagProbability();
             writeTagGivenPreviousTagProbabilities();
 
-            //close buffer reader and File writer
+            writeToFile("********************* END OF FILE *********************");
+            //TODO: close the buffer reader object:
             b.close();
+            System.out.println("Input File buffer reader closed");
+            //TODO: close the File Writer Object
             output.close();
+            System.out.println("Output File Writer closed");
 
 
             //*********** PRINTING AND TESTING PART *****************
             //printHashMap(wordsWithTagsMap);
+
         } catch (IOException e) {
             e.printStackTrace();
         }
