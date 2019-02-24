@@ -1,8 +1,7 @@
 import java.io.FileWriter;
 import java.util.*;
 import java.io.*;
-public class Q3
-{
+public class Q3 {
     static FileWriter output = null;
     static List<String> wordsList;
     static List<String> correctTagList;
@@ -10,49 +9,49 @@ public class Q3
     static HashMap<String, HashMap<String, Integer>> wordsWithTagsMap;
     static HashMap<String, String> wordWithMostFrequentTagMap;
     static String fromTag = "NN";
-    static String[] toTagsArray = {"JJ","VB"};
+    static String[] toTagsArray = {"JJ", "VB"};
     static List<Transformation> transformationsList = new ArrayList<>();
     static List<String> sentenceWordsList;
     static List<String> sentenceTagList;
+    static HashMap<String, Integer> tagAndCountMap;
+    static HashMap<String, Integer> tagPairAndCountMap = new HashMap<>();
+    static HashMap<String, Double> wordGivenTagProbabilityMap = new HashMap<>();
+    static HashMap<String, Double> tagGivenPreviousTagProbabilityMap = new HashMap<>();
 
-    public static void main(String[] args)
-    {
+    public static void main(String[] args) {
         wordWithMostFrequentTagMap = new HashMap<>();
         wordsWithTagsMap = new HashMap<>();
         wordsList = new ArrayList<>();
         correctTagList = new ArrayList<>();
         sentenceWordsList = new ArrayList<>();
         sentenceTagList = new ArrayList<>();
-        String line ="";
+        String line = "";
         String inputSentence = "The_DT standard_?? Turbo_NN engine_NN is_VBZ hard_JJ to_TO work_??";
         boolean flag = false;
 
 
+
         // pass the input file path as the argument while running this code.
-        if(args.length ==0)
-        {
+        if (args.length == 0) {
             System.out.println("ERROR: Missing input file path in arguments!");
             return;
         }
-        try
-        {
+        try {
             File file = new File(args[0]);
             BufferedReader b = new BufferedReader(new FileReader(file));
             //int n = 3;
             //while (n!=0)
-            while ((line = b.readLine()) != null)
-            {
+            while ((line = b.readLine()) != null) {
                 //line = b.readLine();
                 //n--;
 
-                for(String pair: line.split(" "))
-                {
+                for (String pair : line.split(" ")) {
                     String word = pair.split("_")[0];
                     wordsList.add(word);
                     String tag = pair.split("_")[1];
                     correctTagList.add(tag);
                     //TODO: write a function to create hashmap of all words with all their tags & corresponding counts.
-                    storeAllTagsAndCounts(word,tag);
+                    storeAllTagsAndCounts(word, tag);
 
                 }
 
@@ -62,74 +61,78 @@ public class Q3
 
             //TODO: create a list of tags corresponding to the list of words
             currentTagList = new ArrayList<>();
-            for(String word : wordsList)
-            {
+            for (String word : wordsList) {
                 currentTagList.add(wordWithMostFrequentTagMap.get(word));
             }
 
             //open filewriter object:
-            output = new FileWriter("Q3_output.txt",false);
+            output = new FileWriter("Q3_output.txt", false);
 
             //TODO: Get best transformation rules for the corupus"
-            System.out.println("************* BRill's Tagging **************");
+            System.out.println("********************* Part A:  BRill's Tagging *********************");
             System.out.println("Best Rules: ");
+            writeToFile("************* BRill's Tagging **************");
+            writeToFile("\nBest Rules:");
             getTransformations();
 
             //TODO: process the input sentence:
-            System.out.println("\nGiven input sentence:\n"+inputSentence);
-
+            System.out.println("\nGiven input sentence:\n" + inputSentence);
+            writeToFile("\nGiven input sentence:\n" + inputSentence);
             //TODO: Replacing ?? with most probable tags learnt:
             System.out.println("\nReplacing ?? with most probable tags learnt:");
-            for(String pair: inputSentence.split(" "))
-            {
+            writeToFile("\nReplacing ?? with most probable tags learnt:");
+            for (String pair : inputSentence.split(" ")) {
                 String word = pair.split("_")[0];
                 sentenceWordsList.add(word);
                 String tag = pair.split("_")[1];
                 String tag1 = "";
                 //replace ?? tags with most probabable tags learnt from the corpus
-                if(tag.equals("??"))
-                {
+                if (tag.equals("??")) {
                     tag = wordWithMostFrequentTagMap.get(word);
                 }
                 sentenceTagList.add(tag);
 
-                System.out.print(word+"_"+tag+" ");
+                System.out.print(word + "_" + tag + " ");
+                writeToFile(word + "_" + tag + " ");
             }
 
             System.out.println("\n\nApplying learnt rules to the sentence: ");
+            writeToFile("\n\nApplying learnt rules to the sentence: ");
 
-            for(int i =0; i<sentenceTagList.size();i++)
-            {
-                for(Transformation transformation : transformationsList)
-                {
+            for (int i = 0; i < sentenceTagList.size(); i++) {
+                for (Transformation transformation : transformationsList) {
                     //to ensure negative score rules are not being applied:
-                    if(transformation.score >0)
-                    {
-                        if(sentenceTagList.get(i) == transformation.fromTag)
-                        {
-                            if(sentenceTagList.get(i-1) == transformation.previousTag)
-                            {
-                                sentenceTagList.set(i,transformation.toTag);
+                    if (transformation.score > 0) {
+                        if (sentenceTagList.get(i) == transformation.fromTag) {
+                            if (sentenceTagList.get(i - 1) == transformation.previousTag) {
+                                sentenceTagList.set(i, transformation.toTag);
                                 flag = true;
                             }
                         }
                     }
                 }
             }
-            if(!flag)
-            {
+            if (!flag) {
                 System.out.println("*** No rules applied to the sentence as it doesn't satisfy the rules' criterion.");
+                writeToFile("*** No rules applied to the sentence as it doesn't satisfy the rules' criterion.");
             }
             System.out.println("\nFinal Answer:");
-            for(int i=0;i<sentenceWordsList.size();i++)
-            {
-                System.out.print(sentenceWordsList.get(i)+"_"+sentenceTagList.get(i)+" ");
+            writeToFile("\nFinal Answer:");
+            for (int i = 0; i < sentenceWordsList.size(); i++) {
+                System.out.print(sentenceWordsList.get(i) + "_" + sentenceTagList.get(i) + " ");
+                writeToFile(sentenceWordsList.get(i) + "_" + sentenceTagList.get(i) + " ");
             }
-
-
-
-
-
+            writeToFile("======================================================================================================");
+            writeToFile("\n *********************Part B: Naive Bayes Calculation*********************");
+            System.out.println("\n\n********************* Part B:  Naive Bayes Calculation *********************\n");
+            //TODO: Naive-Bayes calculations:
+            formTagsUnigramsBigrams();
+            //TODO: calculate Word|Tag probability:
+            calculateWordGivenTagProbability();
+            writeWordGivenTagProbabilities();
+            //TODO: calculate Tag|Previous Tag probability:
+            calculateTagGivenPreviousTagProbability();
+            writeTagGivenPreviousTagProbabilities();
 
             //close buffer reader and File writer
             b.close();
@@ -138,14 +141,89 @@ public class Q3
 
             //*********** PRINTING AND TESTING PART *****************
             //printHashMap(wordsWithTagsMap);
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
     }
 
+    //calculate Tag|Previous Tag probability:
+    private static void calculateTagGivenPreviousTagProbability()
+    {
+        for (Map.Entry<String, Integer> entry : tagPairAndCountMap.entrySet()) {
+            String givenTag = entry.getKey().split("~~~")[0];
+            String tag = entry.getKey().split("~~~")[1];
+            tagGivenPreviousTagProbabilityMap.put("(" + tag + "|" + givenTag + ")", (double) entry.getValue() / tagAndCountMap.get(givenTag));
+        }
+    }
+
+    //function to calculate Word|Tag probability:
+    private static void calculateWordGivenTagProbability()
+    {
+        for(Map.Entry<String,HashMap<String , Integer>> entry : wordsWithTagsMap.entrySet())
+        {
+            String word = entry.getKey();
+            Map<String, Integer> countOfTagsMap = entry.getValue();
+            for(Map.Entry<String,Integer> countEntry: countOfTagsMap.entrySet())
+            {
+                String tag = countEntry.getKey();
+                Integer count = countEntry.getValue();
+                // total count of tags in the corpus:
+                Integer tagTotalCount = tagAndCountMap.get(tag);
+                double probability = (double) count/tagTotalCount;
+                wordGivenTagProbabilityMap.put("(" + word + "|" + tag + ")",probability);
+            }
+        }
+    }
+
+
+    //function to calculate Unigrams & Bigrams for Naive Bayes: (Similar to Ques2 Unigrams & Bigrams calculation)
+    private static void formTagsUnigramsBigrams()
+    {
+        tagAndCountMap = new HashMap<>();
+        tagPairAndCountMap = new HashMap<>();
+        String previousTag = null;
+        for(String tag : correctTagList)
+        {
+            int count = (tagAndCountMap.containsKey(tag)) ? tagAndCountMap.get(tag) : 0;
+            tagAndCountMap.put(tag, count +1);
+
+            if(previousTag != null)
+            {
+                String key = previousTag +"~~~"+ tag;
+                int pairsCount = (tagPairAndCountMap.containsKey(key))?tagPairAndCountMap.get(key) : 0;
+                tagPairAndCountMap.put(key, pairsCount+1);
+            }
+            previousTag = tag;
+        }
+    }
+
+    //write Word|Tag probabilities to the file:
+    private static void writeWordGivenTagProbabilities()
+    {
+        System.out.print("Writing Word|Tag probabilities to the file ");
+        writeToFile("********************* Probability(Word|Tag)*********************");
+        for(Map.Entry<String,Double> entry : wordGivenTagProbabilityMap.entrySet())
+        {
+            writeToFile("Prob("+entry.getKey()+" = "+entry.getValue());
+        }
+        System.out.println(" - - - - - - > COMPLETE!");
+    }
+
+    //write Tag|Previous Tag probabilities to the file:
+    private static void writeTagGivenPreviousTagProbabilities()
+    {
+        System.out.print("Writing Tag|Previous Tag to the file ");
+        writeToFile("********************* Probability(Tag|Previous Tag)*********************");
+        for(Map.Entry<String,Double> entry : tagGivenPreviousTagProbabilityMap.entrySet())
+        {
+            writeToFile("Prob("+entry.getKey()+" = "+entry.getValue());
+        }
+        System.out.println(" - - - - - - > COMPLETE!");
+    }
+
+
+    //function to get transformation rules:
     private static void getTransformations()
     {
 
@@ -154,7 +232,7 @@ public class Q3
         {
             if(transformation != null)
             {
-                //writeToFile(transformation.printRule());
+                writeToFile(transformation.printRule()+"\n");
                 System.out.println(transformation.printRule());
             }
             else
