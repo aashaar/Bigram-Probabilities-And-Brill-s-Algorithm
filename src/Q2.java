@@ -6,7 +6,7 @@ public class Q2
 {
 
     static FileWriter output = null;
-
+    static int nMax =0;
     public static void main(String[] args)
     {
         // pass the input file path as the argument while running this code.
@@ -220,6 +220,10 @@ public class Q2
         {
             return nBucket.get(i);
         }
+        else if(i > nMax)
+        {
+            return nBucket.get(i-1);
+        }
         else
         {
             return 0;
@@ -233,6 +237,7 @@ public class Q2
         for(Map.Entry<String,Integer> entry : bigramsMap.entrySet())
         {
             int n = entry.getValue();
+            nMax = Math.max(nMax,n);
             if(result.containsKey(n))
             {
                 result.put(n, result.get(n) + 1);
