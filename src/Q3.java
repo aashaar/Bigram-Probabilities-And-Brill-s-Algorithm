@@ -158,7 +158,7 @@ public class Q3 {
         for (Map.Entry<String, Integer> entry : tagPairAndCountMap.entrySet()) {
             String givenTag = entry.getKey().split("~~~")[0];
             String tag = entry.getKey().split("~~~")[1];
-            tagGivenPreviousTagProbabilityMap.put("(" + tag + "|" + givenTag + ")", (double) entry.getValue() / tagAndCountMap.get(givenTag));
+            tagGivenPreviousTagProbabilityMap.put( tag + "|" + givenTag , (double) entry.getValue() / tagAndCountMap.get(givenTag));
         }
     }
 
@@ -176,7 +176,7 @@ public class Q3 {
                 // total count of tags in the corpus:
                 Integer tagTotalCount = tagAndCountMap.get(tag);
                 double probability = (double) count/tagTotalCount;
-                wordGivenTagProbabilityMap.put("(" + word + "|" + tag + ")",probability);
+                wordGivenTagProbabilityMap.put( word + "|" + tag ,probability);
             }
         }
     }
@@ -210,7 +210,7 @@ public class Q3 {
         writeToFile("********************* Probability(Word|Tag)*********************");
         for(Map.Entry<String,Double> entry : wordGivenTagProbabilityMap.entrySet())
         {
-            writeToFile("Prob("+entry.getKey()+" = "+entry.getValue());
+            writeToFile("Prob("+entry.getKey()+")"+" = "+entry.getValue());
         }
         System.out.println(" - - - - - - > COMPLETE!");
     }
@@ -222,7 +222,7 @@ public class Q3 {
         writeToFile("********************* Probability(Tag|Previous Tag)*********************");
         for(Map.Entry<String,Double> entry : tagGivenPreviousTagProbabilityMap.entrySet())
         {
-            writeToFile("Prob("+entry.getKey()+" = "+entry.getValue());
+            writeToFile("Prob("+entry.getKey()+")"+" = "+entry.getValue());
         }
         System.out.println(" - - - - - - > COMPLETE!");
     }

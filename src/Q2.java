@@ -266,7 +266,7 @@ public class Q2
             String currentWord = tokens[1];
             int denominator = (unigramsMap.get(givenWord))+distinctUnigramTotalCount;
             double reconstitutedCount = ((double) entry.getValue() +1) * unigramsMap.get(givenWord)/denominator;
-            //double reconstitutedCount = (((double) entry.getValue()+1)*unigramsTotalCount)/(unigramsTotalCount+distinctUnigramTotalCount);
+
             //note the order for storing counts is given word - current word
             result.put((givenWord +"~~~" + currentWord),reconstitutedCount);
         }
